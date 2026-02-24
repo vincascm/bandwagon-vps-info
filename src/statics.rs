@@ -14,11 +14,16 @@ pub struct Args {
     /// Multiple API Keys, corresponding to VEIDs
     #[arg(long, value_delimiter = ',')]
     pub api_keys: Vec<String>,
+
+    /// Listen address
+    #[arg(long, default_value = "0.0.0.0:3000")]
+    pub listen_addr: String,
 }
 
 pub struct Config {
     pub credentials: Vec<(String, String)>,
     pub jinja: Environment<'static>,
+    pub listen_addr: String,
 }
 
 static CONFIG: OnceLock<Config> = OnceLock::new();
@@ -43,7 +48,11 @@ pub fn init(args: Args) -> Result<()> {
     jinja.add_template("info-page", include_str!("../templates/info-page.html"))
         .context("Failed to add template")?;
 
-    let config = Config { credentials, jinja };
+    let config = Config {
+        credentials,
+        jinja,
+        listen_addr: args.listen_addr,
+    };
     CONFIG.set(config).map_err(|_| anyhow::anyhow!("Config already initialized"))?;
     Ok(())
 }

@@ -114,11 +114,12 @@ async fn get_vps_info_page() -> impl IntoResponse {
 }
 
 pub async fn run() -> Result<()> {
+    let config = cfg()?;
     let app = Router::new()
         .route("/info", get(get_vps_info))
         .route("/info-page", get(get_vps_info_page));
 
-    let addr = "0.0.0.0:3000";
+    let addr = &config.listen_addr;
     let listener = tokio::net::TcpListener::bind(addr).await
         .with_context(|| format!("Failed to bind to {}", addr))?;
     
