@@ -1,15 +1,15 @@
 [package]
 name = "bandwagon-vps-info"
 version = "0.1.0"
-edition = "2021"
+edition = "2024"
 
 [dependencies]
-axum = "0.7"
-tokio = { version = "1", features = ["full"] }
-reqwest = { version = "0.12", features = ["json"] }
-serde = { version = "1", features = ["derive"] }
-serde_json = "1"
-clap = { version = "4", features = ["derive"] }
-minijinja = "2"
-futures = "0.3"
-anyhow = "1"
+axum = "0.8.8"
+tokio = { version = "1.49.0", features = ["full"] }
+reqwest = { version = "0.13.2", features = ["json"] }
+serde = { version = "1.0.228", features = ["derive"] }
+serde_json = "1.0.149"
+clap = { version = "4.5.60", features = ["derive"] }
+minijinja = "2.16.0"
+futures = "0.3.32"
+anyhow = "1.0.102"
