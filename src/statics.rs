@@ -1,24 +1,9 @@
-use anyhow::{Context, Result};
 use std::sync::OnceLock;
+
+use anyhow::{Context, Result, anyhow};
 use minijinja::Environment;
-use clap::Parser;
-use crate::server;
 
-#[derive(Parser, Clone)]
-#[command(author, version, about, long_about = None)]
-pub struct Args {
-    /// Multiple VEIDs, separated by comma
-    #[arg(long, value_delimiter = ',')]
-    pub veids: Vec<String>,
-
-    /// Multiple API Keys, corresponding to VEIDs
-    #[arg(long, value_delimiter = ',')]
-    pub api_keys: Vec<String>,
-
-    /// Listen address
-    #[arg(long, default_value = "0.0.0.0:3000")]
-    pub listen_addr: String,
-}
+use crate::Args;
 
 pub struct Config {
     pub credentials: Vec<(String, String)>,
@@ -29,34 +14,40 @@ pub struct Config {
 static CONFIG: OnceLock<Config> = OnceLock::new();
 
 pub fn init(args: Args) -> Result<()> {
-    if args.veids.len() != args.api_keys.len() {
-        anyhow::bail!(
-            "The number of veids ({}) and api_keys ({}) must be the same.",
-            args.veids.len(),
-            args.api_keys.len()
-        );
+    let mut credentials = Vec::new();
+    for i in args.credentials {
+        let (veid, key) = i
+            .split_once(':')
+            .ok_or_else(|| anyhow!("Invalid credential format: {i}. Expected veid:key"))?;
+        credentials.push((veid.to_string(), key.to_string()));
     }
 
-    let credentials: Vec<(String, String)> = args
-        .veids
-        .into_iter()
-        .zip(args.api_keys.into_iter())
-        .collect();
-
     let mut jinja = Environment::new();
-    jinja.add_filter("filesize", server::human_readable_size);
-    jinja.add_template("info-page", include_str!("../templates/info-page.html"))
-        .context("Failed to add template")?;
+    jinja.add_filter("filesize", human_readable_size);
+    jinja.add_template("info-page", include_str!("../templates/info-page.html"))?;
 
     let config = Config {
         credentials,
         jinja,
         listen_addr: args.listen_addr,
     };
-    CONFIG.set(config).map_err(|_| anyhow::anyhow!("Config already initialized"))?;
+    CONFIG
+        .set(config)
+        .map_err(|_| anyhow!("Config already initialized"))?;
     Ok(())
 }
 
 pub fn cfg() -> Result<&'static Config> {
     CONFIG.get().context("get config error")
+}
+
+fn human_readable_size(size: u64) -> String {
+    let units = ["B", "KB", "MB", "GB", "TB"];
+    let mut size = size as f64;
+    let mut unit_idx = 0;
+    while size >= 1024.0 && unit_idx < units.len() - 1 {
+        size /= 1024.0;
+        unit_idx += 1;
+    }
+    format!("{size:.2} {}", units[unit_idx])
 }

@@ -22,6 +22,8 @@
                 <tr>
                     <th>VEID</th>
                     <th>Plan</th>
+                    <th>Location</th>
+                    <th>OS</th>
                     <th>IP Address</th>
                     <th>Used / Total</th>
                     <th>Usage %</th>
@@ -32,6 +34,8 @@
                 <tr>
                     <td>{{ vps.veid }}</td>
                     <td>{{ vps.plan }}</td>
+                    <td>{{ vps.node_location }}</td>
+                    <td>{{ vps.os }}</td>
                     <td>{{ vps.ip_address }}</td>
                     <td>{{ vps.data_counter | filesize }} / {{ vps.plan_monthly_data | filesize }}</td>
                     <td>
