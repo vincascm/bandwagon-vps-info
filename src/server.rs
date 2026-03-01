@@ -17,6 +17,7 @@ struct BandwagonRawResponse {
     ip_addresses: Vec<String>,
     plan_monthly_data: u64,
     data_counter: u64,
+    data_next_reset: u64,
     node_location: String,
     os: String,
 }
@@ -28,6 +29,7 @@ struct VpsInfo {
     ip_address: String,
     plan_monthly_data: u64,
     data_counter: u64,
+    data_next_reset: u64,
     usage_percentage: f64,
     node_location: String,
     os: String,
@@ -57,6 +59,7 @@ impl VpsInfo {
             ip_address: raw.ip_addresses.get(0).cloned().unwrap_or_default(),
             plan_monthly_data: raw.plan_monthly_data,
             data_counter: raw.data_counter,
+            data_next_reset: raw.data_next_reset,
             usage_percentage,
             node_location: raw.node_location,
             os: raw.os,

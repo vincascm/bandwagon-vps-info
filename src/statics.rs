@@ -1,6 +1,7 @@
 use std::sync::OnceLock;
 
 use anyhow::{Context, Result, anyhow};
+use chrono::{DateTime, Utc};
 use minijinja::Environment;
 
 use crate::Args;
@@ -24,6 +25,7 @@ pub fn init(args: Args) -> Result<()> {
 
     let mut jinja = Environment::new();
     jinja.add_filter("filesize", human_readable_size);
+    jinja.add_filter("datetime", format_datetime);
     jinja.add_template("info-page", include_str!("../templates/info-page.html"))?;
 
     let config = Config {
@@ -50,4 +52,12 @@ fn human_readable_size(size: u64) -> String {
         unit_idx += 1;
     }
     format!("{size:.2} {}", units[unit_idx])
+}
+
+fn format_datetime(timestamp: u64) -> String {
+    if timestamp == 0 {
+        return "N/A".to_string();
+    }
+    let dt = DateTime::from_timestamp(timestamp as i64, 0).unwrap_or(Utc::now());
+    dt.format("%Y-%m-%d").to_string()
 }

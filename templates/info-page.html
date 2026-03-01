@@ -26,6 +26,7 @@
                     <th>OS</th>
                     <th>IP Address</th>
                     <th>Used / Total</th>
+                    <th>Next Reset</th>
                     <th>Usage %</th>
                 </tr>
             </thead>
@@ -38,6 +39,7 @@
                     <td>{{ vps.os }}</td>
                     <td>{{ vps.ip_address }}</td>
                     <td>{{ vps.data_counter | filesize }} / {{ vps.plan_monthly_data | filesize }}</td>
+                    <td>{{ vps.data_next_reset | datetime }}</td>
                     <td>
                         <span class="usage-text">{{ vps.usage_percentage | round(2) }}%</span>
                         <div class="usage-bar">

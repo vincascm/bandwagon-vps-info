@@ -13,3 +13,4 @@ clap = { version = "4.5.60", features = ["derive"] }
 minijinja = "2.16.0"
 futures = "0.3.32"
 anyhow = "1.0.102"
+chrono = { version = "0.4.44", features = ["serde"] }
